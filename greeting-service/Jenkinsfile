@@ -23,30 +23,26 @@ pipeline {
         }
 
         // Add the "Deploy" stage here
-         
 
-        stages {
-            // i should install oc tool and export in the step
-            stage('Install oc tool') {
-                steps {
-                    sh '''
-                    curl -L https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.tar.gz | tar xz
-                    export PATH=$PATH:$(pwd)
-                    oc version
-                '''
-                }
+        // i should install oc tool and export in the step
+        stage('Install oc tool') {
+            steps {
+                sh '''
+                curl -L https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.tar.gz | tar xz
+                export PATH=$PATH:$(pwd)
+                oc version
+            '''
             }
-            // export it also in deploy stage
-
-            stage('Deploy') {
-                steps {
-                    sh '''
-                    export PATH=$PATH:$(pwd)
-                    oc version
-                    oc project igalrq-deploy-strategies
-                    oc start-build greeting-service --follow --wait
-                '''
-                }
+        }
+        // export it also in deploy stage
+        stage('Deploy') {
+            steps {
+                sh '''
+                export PATH=$PATH:$(pwd)
+                oc version
+                oc project igalrq-deploy-strategies
+                oc start-build greeting-service --follow --wait
+            '''
             }
         }
     }
