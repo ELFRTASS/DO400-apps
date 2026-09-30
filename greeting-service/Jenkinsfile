@@ -3,6 +3,7 @@ pipeline {
         kubernetes {
             inheritFrom 'nodejs'
             serviceAccount 'jenkins'
+            defaultContainer 'nodejs'
         }
     }
     stages {
