@@ -9,19 +9,25 @@ pipeline {
     stages {
         stage('Install dependencies') {
             steps {
-                sh 'npm ci'
+                dir('greeting-service') {
+                    sh 'npm ci'
+                }
             }
         }
 
         stage('Check Style') {
             steps {
-                sh 'npm run lint'
+                dir('greeting-service') {
+                    sh 'npm run lint'
+                }
             }
         }
 
         stage('Test') {
             steps {
-                sh 'npm test'
+                dir('greeting-service') {
+                    sh 'npm test'
+                }
             }
         }
 
