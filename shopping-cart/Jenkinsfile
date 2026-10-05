@@ -16,10 +16,11 @@ pipeline {
         stage('Test') {
             steps {
                 dir(appDir) {
-                    sh './mvnw -B clean test'
+                    sh 'MAVEN_CONFIG= ./mvnw -B clean test'
                 }
             }
         }
+
         stage('Download oc tool') {
             steps {
                 dir(appDir) {
