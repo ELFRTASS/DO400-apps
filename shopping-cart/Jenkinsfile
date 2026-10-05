@@ -1,10 +1,13 @@
 pipeline {
     //add agent with label maven and svcacc jenkins
+    //corrige agent part avec svcacc faire inheritFrom 'maven' and defaultContainer 'maven' and svc acc jenkins
     agent {
-        label 'maven'
-        serviceAccount 'jenkins'
+        kubernetes {
+            inheritFrom 'maven'
+            defaultContainer 'maven'
+            serviceAccount 'jenkins'
+        }
     }
-
     environment { APP_NAMESPACE = 'igalrq-security-scans' }
     stages {
         stage('Test') {
@@ -39,7 +42,7 @@ pipeline {
                         --follow --wait -n ${APP_NAMESPACE}
                     """
                 }
-            }
+            }SS
         }
         stage('Deploy') {
             steps {
