@@ -51,6 +51,8 @@ pipeline {
             steps {
                 dir(appDir) {
                     sh """
+                        export PATH=\$PATH:\$(pwd)
+                        oc version
                         oc patch deployment security-scans \
                             -p '{"spec": {"template": {"metadata": {"labels": {"build": "build-${BUILD_NUMBER}"}}}}}' \
                             -n ${APP_NAMESPACE}
