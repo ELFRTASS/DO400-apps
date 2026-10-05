@@ -1,7 +1,7 @@
 pipeline {
     //add agent with label maven and svcacc jenkins
-    agent { 
-        label 'maven' 
+    agent {
+        label 'maven'
         serviceAccount 'jenkins'
     }
 
@@ -19,10 +19,12 @@ pipeline {
             steps {
                 dir('shopping-cart') {
                     sh """
-                        curl -L https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz | tar xvz
-                        chmod +x oc
-                        export PATH=$PATH:$(pwd)
-                        oc version
+                    curl -L \
+                        https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz \
+                        | tar xvz
+                    chmod +x oc
+                    export PATH=\$PATH:\$(pwd)
+                    oc version
                     """
                 }
             }
@@ -31,7 +33,7 @@ pipeline {
             steps {
                 dir('shopping-cart') {
                     sh """
-                        export PATH=$PATH:$(pwd)
+                        export PATH=\$PATH:\$(pwd)
                         oc version
                         oc start-build security-scans \
                         --follow --wait -n ${APP_NAMESPACE}
