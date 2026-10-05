@@ -1,26 +1,30 @@
+@CompileStatic
+
+def mavenContainer = 'maven'
+def appDir = 'shopping-cart'
+
 pipeline {
-    //add agent with label maven and svcacc jenkins
-    //corrige agent part avec svcacc faire inheritFrom 'maven' and defaultContainer 'maven' and svc acc jenkins
     agent {
         kubernetes {
-            inheritFrom 'maven'
-            defaultContainer 'maven'
+            inheritFrom mavenContainer
+            defaultContainer mavenContainer
             serviceAccount 'jenkins'
         }
     }
-    environment { APP_NAMESPACE = 'igalrq-security-scans' }
+    environment {
+        APP_NAMESPACE = 'igalrq-security-scans'
+    }
     stages {
         stage('Test') {
             steps {
-                dir('shopping-cart') {
+                dir(appDir) {
                     sh './mvnw clean test'
                 }
             }
         }
-        // stage to download oc tool
         stage('Download oc tool') {
             steps {
-                dir('shopping-cart') {
+                dir(appDir) {
                     sh """
                     curl -L \
                         https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz \
@@ -34,7 +38,7 @@ pipeline {
         }
         stage('Image Build') {
             steps {
-                dir('shopping-cart') {
+                dir(appDir) {
                     sh """
                         export PATH=\$PATH:\$(pwd)
                         oc version
@@ -42,11 +46,11 @@ pipeline {
                         --follow --wait -n ${APP_NAMESPACE}
                     """
                 }
-            }SS
+            }
         }
         stage('Deploy') {
             steps {
-                dir('shopping-cart') {
+                dir(appDir) {
                     sh """
                         oc patch deployment security-scans \
                         -p '{"spec": {"template": {"metadata": {"labels": {"build": "build-${BUILD_NUMBER}"}}}}}' \
