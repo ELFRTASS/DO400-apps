@@ -16,7 +16,7 @@ pipeline {
         stage('Test') {
             steps {
                 dir(appDir) {
-                    sh './mvnw clean test'
+                    sh './mvnw -B clean test'
                 }
             }
         }
