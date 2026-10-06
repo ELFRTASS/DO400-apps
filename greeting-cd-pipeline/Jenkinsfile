@@ -1,17 +1,40 @@
 pipeline {
-    agent { label 'nodejs' }
+    //use kubernetes and iheritfrom the nodejs pod template and svc acc jenkins
+    agent {
+        kubernetes {
+            inheritFrom 'nodejs'
+            defaultContainer 'nodejs'
+            serviceAccount 'jenkins'
+        }
+    }
 
-    // Set your OCP project
-    environment { APP_NAMESPACE = '...' }
 
     stages{
-
         stage('Test'){
             steps {
-                sh "node test.js"
+                dir('greeting-cd-pipeline') {
+                    sh "node test.js"
+                }
             }
         }
-
-        // Add more stages here
+        // stage download and export oc tool 
+        stage('Download and Export oc tool') {
+            steps {
+                sh '''
+                    curl -L https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz | tar xz
+                    export PATH=$PATH:$(pwd)
+                '''
+            }
+        }
+        stage('Deploy') {
+            steps {
+                sh '''
+                    export PATH=$PATH:$(pwd)
+                    oc version
+                    oc start-build greeting-metrics \
+                    --follow --wait -n igalrq-metrics
+                '''
+            }
+        }
     }
 }
